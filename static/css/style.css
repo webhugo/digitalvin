@@ -1,0 +1,36 @@
+.post {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, sans-serif;
+}
+
+.featured-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+}
+
+.post-title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.post-meta {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.post-meta a {
+  color: #007acc;
+  text-decoration: none;
+  margin-right: 0.5rem;
+}
+
+.post-content {
+  line-height: 1.6;
+  font-size: 1rem;
+}
