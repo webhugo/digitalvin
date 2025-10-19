@@ -4,15 +4,25 @@ import path from "path";
 
 const query = `
 {
-  posts(first: 10, where: { status: PUBLISH }) {
+    posts(first: 10, where: { status: PUBLISH }) {
     nodes {
       title
       content
       date
       slug
       featuredImage {
-	node {
-		sourceUrl
+        node {
+          sourceUrl
+        }
+      }
+      categories {
+        nodes {
+          name
+        }
+      }
+      tags {
+        nodes {
+          name
 	}
       }
     }
@@ -37,6 +47,8 @@ title: "${post.title}"
 date: ${post.date}
 slug: "${post.slug}"
 featured_image: "${post.featuredImage?.node?.sourceUrl || ''}"
+categories: [${post.categories.nodes.map(cat => `"${cat.name}"`).join(", ")}]
+tags: [${post.tags.nodes.map(tag => `"${tag.name}"`).join(", ")}]
 ---
 
 ${post.content}

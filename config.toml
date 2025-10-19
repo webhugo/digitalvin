@@ -1,9 +1,0 @@
-baseURL = "https://digitalvin.com/"
-languageCode = "en-us"
-title = "Digital Vin"
-theme = "xmin"
-
-[markup]
-  [markup.goldmark]
-    [markup.goldmark.renderer]
-      unsafe = true
