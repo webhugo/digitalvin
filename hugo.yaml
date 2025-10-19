@@ -5,7 +5,7 @@ theme: "xmin"
 
 menu:
   main:
-    - name: Home
+    - name: All Posts
       url: ""
       weight: 1
     - name: About

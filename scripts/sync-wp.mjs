@@ -62,10 +62,10 @@ function escapeYaml(str) {
 async function syncWordPressPosts() {
   try {
     console.log('🔄 Fetching posts from WordPress...');
-    
+
     const response = await fetch(GRAPHQL_ENDPOINT, {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         "User-Agent": "Hugo-Sync-Bot/1.0"
       },
@@ -77,7 +77,7 @@ async function syncWordPressPosts() {
     }
 
     const { data, errors } = await response.json();
-    
+
     if (errors) {
       console.error('❌ GraphQL errors:', errors);
       return;
@@ -97,7 +97,7 @@ async function syncWordPressPosts() {
     data.posts.nodes.forEach(post => {
       const filename = `${OUTPUT_DIR}/${post.slug}.md`;
       const fileExists = fs.existsSync(filename);
-      
+
       const frontmatter = {
         title: escapeYaml(post.title),
         date: post.date,
@@ -110,7 +110,7 @@ async function syncWordPressPosts() {
       };
 
       const cleanedContent = cleanContent(post.content);
-      
+
       const markdown = `---
 title: "${frontmatter.title}"
 date: ${frontmatter.date}
@@ -126,7 +126,7 @@ ${cleanedContent}
 `;
 
       fs.writeFileSync(filename, markdown);
-      
+
       if (fileExists) {
         updatedPosts++;
         console.log(`📝 Updated: ${post.slug}`);
@@ -137,7 +137,7 @@ ${cleanedContent}
     });
 
     console.log(`✅ Sync complete! ${newPosts} new posts, ${updatedPosts} updated posts`);
-    
+
   } catch (error) {
     console.error('❌ Sync failed:', error.message);
     process.exit(1);

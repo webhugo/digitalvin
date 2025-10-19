@@ -1,6 +1,6 @@
 ---
-title: "Welcome to Digital Vin"
+title: "All Posts"
 ---
 
-This is your homepage. You can customize it later.
+This blog is owned by [Vinay Thoke](https://linkedin.com/in/vinaythoke).
 
