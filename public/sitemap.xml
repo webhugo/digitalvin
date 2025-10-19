@@ -8,16 +8,19 @@
     <loc>http://localhost:1313/categories/</loc>
     <lastmod>2025-10-19T18:52:04+00:00</lastmod>
   </url><url>
+    <loc>http://localhost:1313/categories/category-1/</loc>
+    <lastmod>2025-10-19T18:52:04+00:00</lastmod>
+  </url><url>
     <loc>http://localhost:1313/post/</loc>
     <lastmod>2025-10-19T18:52:04+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/post/sample-post-on-wordpress/</loc>
     <lastmod>2025-10-19T18:52:04+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/uncategorized/</loc>
-    <lastmod>2025-10-19T18:52:04+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/post/hello-world/</loc>
+    <lastmod>2025-10-18T13:59:39+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/categories/uncategorized/</loc>
     <lastmod>2025-10-18T13:59:39+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/</loc>

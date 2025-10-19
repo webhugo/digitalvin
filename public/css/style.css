@@ -298,10 +298,33 @@ article main ol ol > li::before {
   margin-left: -1.2em;
 }
 
+/* Site header and logo */
+.site-header {
+  text-align: center;
+  margin: 2em 0 1em 0;
+}
+
+.site-logo {
+  margin: 0;
+  font-size: 1.8em;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.site-logo a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.site-logo a:hover {
+  color: var(--accent-red);
+}
+
 /* Footer links styling */
 .footer-links {
   text-align: center;
-  margin: 1em 0;
+  margin: 0.5em 0;
 }
 
 .footer-links a {
@@ -314,6 +337,21 @@ article main ol ol > li::before {
 
 .footer-links a:hover {
   color: var(--accent-red);
+  text-decoration: underline;
+}
+
+/* Category in article meta */
+.category-meta {
+  color: var(--text-muted);
+}
+
+.category-meta a {
+  color: var(--accent-red);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.category-meta a:hover {
   text-decoration: underline;
 }
 
