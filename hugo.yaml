@@ -11,18 +11,12 @@ menu:
     - name: About
       url: "about/"
       weight: 2
-    - name: Categories
-      url: "categories/"
-      weight: 3
-    - name: Tags
-      url: "tags/"
-      weight: 4
     - name: Subscribe
       url: "index.xml"
-      weight: 5
+      weight: 3
 
 params:
-  footer: "&copy; [Vinay Thoke](https://digitalvin.com) 2025 -- {Year}"
+  footer: "&copy; [Vinay Thoke](https://bio.link/vinaythoke) 2025 -- {Year}"
 
 markup:
   goldmark:

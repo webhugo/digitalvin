@@ -247,6 +247,76 @@ tr:nth-child(even) {
   background: var(--accent-bg);
 }
 
+/* Custom list styling - only in article content */
+article main ul {
+  list-style: none;
+  padding-left: 1.2em;
+}
+
+article main ul > li::before {
+  content: "→";
+  color: var(--accent-red);
+  font-weight: bold;
+  position: absolute;
+  margin-left: -1.2em;
+}
+
+article main ol {
+  list-style: none;
+  counter-reset: item;
+  padding-left: 1.5em;
+}
+
+article main ol > li {
+  counter-increment: item;
+}
+
+article main ol > li::before {
+  content: counter(item) " /";
+  color: var(--accent-red);
+  font-weight: bold;
+  position: absolute;
+  margin-left: -1.5em;
+}
+
+/* Nested lists in article content */
+article main ul ul, 
+article main ol ul, 
+article main ul ol, 
+article main ol ol {
+  margin: 0.5em 0;
+  padding-left: 1.2em;
+}
+
+article main ul ul > li::before,
+article main ol ul > li::before,
+article main ul ol > li::before,
+article main ol ol > li::before {
+  content: "/";
+  color: var(--text-muted);
+  font-weight: normal;
+  margin-left: -1.2em;
+}
+
+/* Footer links styling */
+.footer-links {
+  text-align: center;
+  margin: 1em 0;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9em;
+  margin: 0 1em;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--accent-red);
+  text-decoration: underline;
+}
+
 /* Featured image styling */
 .featured-image {
   margin: 0 0 2em 0;
