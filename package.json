@@ -1,0 +1,16 @@
+{
+  "name": "digitalvin-blog",
+  "version": "1.0.0",
+  "description": "Hugo blog with WordPress sync",
+  "type": "module",
+  "scripts": {
+    "sync": "node scripts/sync-wp.mjs",
+    "build": "hugo --minify",
+    "serve": "hugo server -D"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "author": "Vinay Thoke",
+  "license": "MIT"
+}
