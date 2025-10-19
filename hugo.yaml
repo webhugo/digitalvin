@@ -1,0 +1,25 @@
+baseURL: "https://digitalvin.com/"
+languageCode: "en-us"
+title: "Digital Vin"
+theme: "xmin"
+
+menu:
+  main:
+    - name: Home
+      url: ""
+      weight: 1
+    - name: About
+      url: "about/"
+      weight: 2
+    - name: Categories
+      url: "categories/"
+      weight: 3
+    - name: Tags
+      url: "tags/"
+      weight: 4
+    - name: Subscribe
+      url: "index.xml"
+      weight: 5
+
+params:
+  footer: "&copy; [Vinay Thoke](https://digitalvin.com) 2025 -- {Year}"
