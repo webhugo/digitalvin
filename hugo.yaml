@@ -23,3 +23,8 @@ menu:
 
 params:
   footer: "&copy; [Vinay Thoke](https://digitalvin.com) 2025 -- {Year}"
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
