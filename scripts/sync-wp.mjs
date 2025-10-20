@@ -2,7 +2,25 @@ import fs from "fs";
 import fetch from "node-fetch";
 import path from "path";
 
-const GRAPHQL_ENDPOINT = "https://blog.digitalvin.com/graphql";
+// Load environment variables from .env file if it exists (for local development)
+if (fs.existsSync('.env')) {
+  const envContent = fs.readFileSync('.env', 'utf8');
+  envContent.split('\n').forEach(line => {
+    const [key, value] = line.split('=');
+    if (key && value) {
+      process.env[key.trim()] = value.trim();
+    }
+  });
+}
+
+// Common WordPress GraphQL endpoints
+const POSSIBLE_ENDPOINTS = [
+  "https://blog.digitalvin.com/graphql",
+  "https://blog.digitalvin.com/wp-json/graphql",
+  "https://blog.digitalvin.com/index.php?graphql"
+];
+
+const GRAPHQL_ENDPOINT = process.env.WP_GRAPHQL_ENDPOINT || POSSIBLE_ENDPOINTS[0];
 const OUTPUT_DIR = "content/post";
 
 // Enhanced GraphQL query with additional fields for better content processing
@@ -152,21 +170,92 @@ function deleteRemovedPosts(wordPressSlugs, existingSlugs) {
   return deletedPosts;
 }
 
+// Test GraphQL endpoint availability
+async function testGraphQLEndpoint(endpoint, headers) {
+  try {
+    const testQuery = `{ __schema { queryType { name } } }`;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ query: testQuery })
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.data && data.data.__schema;
+    }
+    return false;
+  } catch (error) {
+    return false;
+  }
+}
+
 async function syncWordPressPosts() {
   try {
     console.log('🔄 Fetching posts from WordPress...');
 
-    const response = await fetch(GRAPHQL_ENDPOINT, {
+    // Prepare headers
+    const headers = {
+      "Content-Type": "application/json",
+      "User-Agent": "Hugo-Sync-Bot/1.0"
+    };
+
+    // Add HTTP Basic Auth if credentials are provided via environment variables
+    if (process.env.WP_AUTH_USER && process.env.WP_AUTH_PASS) {
+      const credentials = Buffer.from(`${process.env.WP_AUTH_USER}:${process.env.WP_AUTH_PASS}`).toString('base64');
+      headers['Authorization'] = `Basic ${credentials}`;
+      console.log('🔐 Using HTTP Basic Authentication');
+      console.log(`   Username: ${process.env.WP_AUTH_USER}`);
+      console.log(`   Password: ${'*'.repeat(process.env.WP_AUTH_PASS.length)}`);
+    } else {
+      console.log('⚠️  No HTTP Basic Auth credentials provided');
+      console.log('   WP_AUTH_USER:', process.env.WP_AUTH_USER ? 'SET' : 'NOT SET');
+      console.log('   WP_AUTH_PASS:', process.env.WP_AUTH_PASS ? 'SET' : 'NOT SET');
+      console.log('   Set WP_AUTH_USER and WP_AUTH_PASS environment variables if needed');
+    }
+
+    // Test endpoints to find the working one
+    let workingEndpoint = GRAPHQL_ENDPOINT;
+    if (!process.env.WP_GRAPHQL_ENDPOINT) {
+      console.log('🔍 Testing GraphQL endpoints...');
+      for (const endpoint of POSSIBLE_ENDPOINTS) {
+        console.log(`   Testing: ${endpoint}`);
+        if (await testGraphQLEndpoint(endpoint, headers)) {
+          workingEndpoint = endpoint;
+          console.log(`✅ Found working endpoint: ${endpoint}`);
+          break;
+        }
+      }
+    }
+
+    const response = await fetch(workingEndpoint, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "User-Agent": "Hugo-Sync-Bot/1.0"
-      },
+      headers,
       body: JSON.stringify({ query })
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`❌ HTTP ${response.status}: ${response.statusText}`);
+      console.error(`Response: ${errorText}`);
+      
+      if (response.status === 401) {
+        console.error('🔐 Authentication failed. Please check your HTTP Basic Auth credentials.');
+        console.error('');
+        console.error('For local development:');
+        console.error('  1. Copy .env.example to .env');
+        console.error('  2. Fill in your WordPress HTTP Basic Auth credentials');
+        console.error('');
+        console.error('For GitHub Actions:');
+        console.error('  1. Go to your repository Settings > Secrets and variables > Actions');
+        console.error('  2. Add WP_AUTH_USER and WP_AUTH_PASS secrets');
+        console.error('');
+      } else if (response.status === 404) {
+        console.error('🔍 GraphQL endpoint not found. The WordPress GraphQL plugin might not be installed.');
+        console.error('Please install and activate the WPGraphQL plugin on your WordPress site.');
+      }
+      
+      throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
     }
 
     const { data, errors } = await response.json();
