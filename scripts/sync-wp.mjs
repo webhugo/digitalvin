@@ -5,29 +5,40 @@ import path from "path";
 const GRAPHQL_ENDPOINT = "https://blog.digitalvin.com/graphql";
 const OUTPUT_DIR = "content/post";
 
+// Enhanced GraphQL query with additional fields for better content processing
 const query = `
 {
   posts(first: 50, where: { status: PUBLISH }) {
     nodes {
       title
-      content
+      content(format: RENDERED)
       date
       slug
-      excerpt
+      excerpt(format: RENDERED)
+      author {
+        node {
+          name
+          slug
+        }
+      }
       featuredImage {
         node {
           sourceUrl
           altText
+          caption
+          description
         }
       }
       categories {
         nodes {
           name
+          slug
         }
       }
       tags {
         nodes {
           name
+          slug
         }
       }
     }
@@ -35,150 +46,110 @@ const query = `
 }
 `;
 
-// Enhanced HTML to Markdown conversion with rich formatting support
+// Enhanced content processing for Hugo/Xmin theme compatibility
 function cleanContent(content) {
-  return content
-    // Handle code blocks first (before other replacements)
-    .replace(/<pre[^>]*><code[^>]*class="language-([^"]*)"[^>]*>([\s\S]*?)<\/code><\/pre>/g, (match, lang, code) => {
-      const cleanCode = code
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&amp;/g, '&')
-        .replace(/&quot;/g, '"');
-      return `\n\`\`\`${lang}\n${cleanCode}\n\`\`\`\n`;
-    })
-    .replace(/<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/g, (match, code) => {
-      const cleanCode = code
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&amp;/g, '&')
-        .replace(/&quot;/g, '"');
-      return `\n\`\`\`\n${cleanCode}\n\`\`\`\n`;
-    })
-    // Handle inline code
-    .replace(/<code[^>]*>(.*?)<\/code>/g, '`$1`')
-    
-    // Handle blockquotes
-    .replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/g, (match, content) => {
-      const cleanQuote = content
-        .replace(/<p>/g, '')
-        .replace(/<\/p>/g, '\n')
-        .replace(/^\s+|\s+$/g, '')
-        .split('\n')
-        .map(line => line.trim() ? `> ${line.trim()}` : '>')
-        .join('\n');
-      return `\n${cleanQuote}\n`;
-    })
-    
-    // Handle tables
-    .replace(/<table[^>]*>([\s\S]*?)<\/table>/g, (match, tableContent) => {
-      let markdown = '\n';
-      const rows = tableContent.match(/<tr[^>]*>([\s\S]*?)<\/tr>/g) || [];
-      
-      rows.forEach((row, index) => {
-        const cells = row.match(/<t[hd][^>]*>([\s\S]*?)<\/t[hd]>/g) || [];
-        const cellContents = cells.map(cell => 
-          cell.replace(/<t[hd][^>]*>|<\/t[hd]>/g, '').replace(/<[^>]*>/g, '').trim()
-        );
-        
-        markdown += '| ' + cellContents.join(' | ') + ' |\n';
-        
-        // Add separator after header row
-        if (index === 0) {
-          markdown += '|' + cellContents.map(() => '---').join('|') + '|\n';
-        }
-      });
-      
-      return markdown + '\n';
-    })
-    
-    // Handle lists - unordered
-    .replace(/<ul[^>]*>([\s\S]*?)<\/ul>/g, (match, listContent) => {
-      const items = listContent.match(/<li[^>]*>([\s\S]*?)<\/li>/g) || [];
-      const markdown = items.map(item => {
-        const cleanItem = item
-          .replace(/<li[^>]*>|<\/li>/g, '')
-          .replace(/<[^>]*>/g, '')
-          .trim();
-        return `- ${cleanItem}`;
-      }).join('\n');
-      return `\n${markdown}\n`;
-    })
-    
-    // Handle lists - ordered
-    .replace(/<ol[^>]*>([\s\S]*?)<\/ol>/g, (match, listContent) => {
-      const items = listContent.match(/<li[^>]*>([\s\S]*?)<\/li>/g) || [];
-      const markdown = items.map((item, index) => {
-        const cleanItem = item
-          .replace(/<li[^>]*>|<\/li>/g, '')
-          .replace(/<[^>]*>/g, '')
-          .trim();
-        return `${index + 1}. ${cleanItem}`;
-      }).join('\n');
-      return `\n${markdown}\n`;
-    })
-    
-    // Handle headings
-    .replace(/<h([1-6])[^>]*>(.*?)<\/h[1-6]>/g, (match, level, text) => {
-      const cleanText = text.replace(/<[^>]*>/g, '').trim();
-      return '\n' + '#'.repeat(parseInt(level)) + ' ' + cleanText + '\n';
-    })
-    
-    // Handle horizontal rules
-    .replace(/<hr[^>]*\/?>/g, '\n---\n')
-    
-    // Handle text formatting
-    .replace(/<strong[^>]*>(.*?)<\/strong>/g, '**$1**')
-    .replace(/<b[^>]*>(.*?)<\/b>/g, '**$1**')
-    .replace(/<em[^>]*>(.*?)<\/em>/g, '*$1*')
-    .replace(/<i[^>]*>(.*?)<\/i>/g, '*$1*')
-    .replace(/<del[^>]*>(.*?)<\/del>/g, '~~$1~~')
-    .replace(/<s[^>]*>(.*?)<\/s>/g, '~~$1~~')
-    .replace(/<strike[^>]*>(.*?)<\/strike>/g, '~~$1~~')
-    
-    // Handle links
-    .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/g, '[$2]($1)')
-    
-    // Handle math expressions (preserve LaTeX)
-    .replace(/\\\[([\s\S]*?)\\\]/g, '$$$$1$$')  // Display math \[ \] to $$ $$
-    .replace(/\\\(([\s\S]*?)\\\)/g, '\\($1\\)') // Inline math \( \) - keep as is
-    
-    // Handle images
-    .replace(/<img[^>]*src="([^"]*)"[^>]*alt="([^"]*)"[^>]*>/g, '![$2]($1)')
-    .replace(/<img[^>]*alt="([^"]*)"[^>]*src="([^"]*)"[^>]*>/g, '![$1]($2)')
-    .replace(/<img[^>]*src="([^"]*)"[^>]*>/g, '![]($1)')
-    
-    // Handle line breaks and paragraphs
-    .replace(/<br\s*\/?>/g, '\n')
-    .replace(/<p[^>]*>/g, '\n')
-    .replace(/<\/p>/g, '\n')
-    
-    // Handle divs (convert to line breaks)
-    .replace(/<div[^>]*>/g, '\n')
-    .replace(/<\/div>/g, '\n')
-    
-    // Clean up HTML entities
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, ' ')
-    
-    // Remove any remaining HTML tags
-    .replace(/<[^>]*>/g, '')
-    
-    // Clean up whitespace and newlines
-    .replace(/\n\s*\n\s*\n/g, '\n\n') // Multiple newlines to double
-    .replace(/^\s+|\s+$/g, '') // Trim start/end
-    .replace(/[ \t]+$/gm, '') // Remove trailing spaces
-    .trim();
+  if (!content) return '';
+  
+  let cleaned = content;
+
+  // Handle WordPress block editor content
+  // Remove WordPress preformatted blocks (both complete and incomplete)
+  cleaned = cleaned.replace(/^\s*<pre[^>]*class="wp-block-preformatted"[^>]*>([\s\S]*)<\/pre>\s*$/g, '$1');
+  cleaned = cleaned.replace(/^\s*<pre[^>]*class="wp-block-preformatted"[^>]*>([\s\S]*)$/g, '$1');
+
+  // Clean up WordPress-specific HTML entities and formatting
+  cleaned = cleaned.replace(/&#8217;/g, "'");
+  cleaned = cleaned.replace(/&#8216;/g, "'");
+  cleaned = cleaned.replace(/&#8220;/g, '"');
+  cleaned = cleaned.replace(/&#8221;/g, '"');
+  cleaned = cleaned.replace(/&#8211;/g, '–');
+  cleaned = cleaned.replace(/&#8212;/g, '—');
+  cleaned = cleaned.replace(/&hellip;/g, '…');
+  cleaned = cleaned.replace(/&nbsp;/g, ' ');
+
+  // Convert WordPress blocks to Hugo-friendly HTML
+  // Handle WordPress image blocks
+  cleaned = cleaned.replace(
+    /<figure class="wp-block-image[^"]*"[^>]*>\s*<img([^>]+)>\s*(?:<figcaption[^>]*>(.*?)<\/figcaption>)?\s*<\/figure>/g,
+    (match, imgAttrs, caption) => {
+      if (caption) {
+        return `<figure>\n<img${imgAttrs}>\n<figcaption>${caption}</figcaption>\n</figure>`;
+      }
+      return `<img${imgAttrs}>`;
+    }
+  );
+
+  // Handle WordPress quote blocks
+  cleaned = cleaned.replace(
+    /<blockquote class="wp-block-quote[^"]*"[^>]*>([\s\S]*?)<\/blockquote>/g,
+    '<blockquote>$1</blockquote>'
+  );
+
+  // Handle WordPress code blocks
+  cleaned = cleaned.replace(
+    /<pre class="wp-block-code[^"]*"[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/g,
+    '<pre><code>$1</code></pre>'
+  );
+
+  // Remove WordPress-specific CSS classes while preserving structure
+  cleaned = cleaned.replace(/class="wp-block-[^"]*"/g, '');
+  cleaned = cleaned.replace(/class=""/g, '');
+
+  // Convert <br> tags to proper line breaks
+  cleaned = cleaned.replace(/<br\s*\/?>/g, '\n');
+  cleaned = cleaned.replace(/<br>/g, '\n');
+  
+  // Clean up extra whitespace and line breaks
+  cleaned = cleaned.replace(/^(\n)+/g, '').replace(/(\n)+$/g, '');
+  cleaned = cleaned.replace(/\n\s*\n\s*\n/g, '\n\n'); // Remove excessive line breaks
+  cleaned = cleaned.replace(/\n{3,}/g, '\n\n'); // Limit to max 2 consecutive line breaks
+
+  return cleaned.trim();
 }
 
 // Escape YAML special characters in strings
 function escapeYaml(str) {
   if (!str) return '';
   return str.replace(/"/g, '\\"').replace(/\n/g, ' ');
+}
+
+// Get existing Hugo post files
+function getExistingPosts() {
+  if (!fs.existsSync(OUTPUT_DIR)) {
+    return [];
+  }
+
+  return fs.readdirSync(OUTPUT_DIR)
+    .filter(file => file.endsWith('.md'))
+    .map(file => path.basename(file, '.md'));
+}
+
+// Delete posts that no longer exist in WordPress
+function deleteRemovedPosts(wordPressSlugs, existingSlugs) {
+  const deletedPosts = [];
+
+  existingSlugs.forEach(slug => {
+    if (!wordPressSlugs.includes(slug)) {
+      const filename = `${OUTPUT_DIR}/${slug}.md`;
+      const publicPostDir = `public/post/${slug}`;
+
+      try {
+        // Delete markdown file
+        fs.unlinkSync(filename);
+
+        // Delete public folder for this post if it exists
+        if (fs.existsSync(publicPostDir)) {
+          fs.rmSync(publicPostDir, { recursive: true, force: true });
+        }
+
+        deletedPosts.push(slug);
+      } catch (error) {
+        console.error(`❌ Failed to delete ${slug}:`, error.message);
+      }
+    }
+  });
+
+  return deletedPosts;
 }
 
 async function syncWordPressPosts() {
@@ -213,35 +184,83 @@ async function syncWordPressPosts() {
     // Ensure output directory exists
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
+    // Get existing posts before sync
+    const existingSlugs = getExistingPosts();
+    const wordPressSlugs = data.posts.nodes.map(post => post.slug);
+
     let newPosts = 0;
     let updatedPosts = 0;
 
+    // Sync WordPress posts
     data.posts.nodes.forEach(post => {
       const filename = `${OUTPUT_DIR}/${post.slug}.md`;
       const fileExists = fs.existsSync(filename);
 
+      // Enhanced excerpt processing with better auto-generation detection
+      const rawExcerpt = post.excerpt || '';
+      const cleanExcerpt = rawExcerpt
+        .replace(/<[^>]*>/g, '') // Remove HTML tags
+        .replace(/&#8217;/g, "'")
+        .replace(/&#8216;/g, "'")
+        .replace(/&#8220;/g, '"')
+        .replace(/&#8221;/g, '"')
+        .replace(/&#8211;/g, '–')
+        .replace(/&#8212;/g, '—')
+        .replace(/&hellip;/g, '…')
+        .replace(/\[&hellip;\]/g, '…')
+        .replace(/&nbsp;/g, ' ')
+        .trim();
+      
+      // Detect auto-generated excerpts (WordPress typically auto-generates these patterns)
+      const isAutoGenerated = !rawExcerpt ||
+        rawExcerpt.includes('[&hellip;]') ||
+        rawExcerpt.includes('&hellip;') ||
+        cleanExcerpt.includes('…') ||
+        cleanExcerpt.endsWith('…') ||
+        rawExcerpt.includes('[...]') ||
+        rawExcerpt.includes('...') ||
+        cleanExcerpt.trim() === '' ||
+        cleanExcerpt.length < 30 ||
+        cleanExcerpt.length > 500 ||
+        cleanExcerpt.split(' ').length < 10;
+      
+      // Only use excerpt if it appears to be manually written
+      const hasManualExcerpt = !isAutoGenerated;
+
+      // Enhanced frontmatter with additional Hugo/SEO fields
       const frontmatter = {
         title: escapeYaml(post.title),
         date: post.date,
         slug: post.slug,
-        excerpt: escapeYaml(post.excerpt),
+        excerpt: hasManualExcerpt ? escapeYaml(cleanExcerpt) : '',
+        description: hasManualExcerpt ? escapeYaml(cleanExcerpt) : '',
+        author: post.author?.node?.name ? escapeYaml(post.author.node.name) : '',
         featured_image: post.featuredImage?.node?.sourceUrl || '',
         featured_image_alt: escapeYaml(post.featuredImage?.node?.altText) || '',
+        featured_image_caption: escapeYaml(post.featuredImage?.node?.caption) || '',
         categories: post.categories.nodes.map(cat => escapeYaml(cat.name)),
-        tags: post.tags.nodes.map(tag => escapeYaml(tag.name))
+        tags: post.tags.nodes.map(tag => escapeYaml(tag.name)),
+        draft: false,
+        type: 'post'
       };
 
       const cleanedContent = cleanContent(post.content);
 
+      // Generate Hugo-compatible frontmatter
       const markdown = `---
 title: "${frontmatter.title}"
 date: ${frontmatter.date}
-slug: "${frontmatter.slug}"
-excerpt: "${frontmatter.excerpt}"
+slug: "${frontmatter.slug}"${frontmatter.excerpt ? `
+excerpt: "${frontmatter.excerpt}"` : ''}${frontmatter.description ? `
+description: "${frontmatter.description}"` : ''}${frontmatter.author ? `
+author: "${frontmatter.author}"` : ''}
 featured_image: "${frontmatter.featured_image}"
-featured_image_alt: "${frontmatter.featured_image_alt}"
+featured_image_alt: "${frontmatter.featured_image_alt}"${frontmatter.featured_image_caption ? `
+featured_image_caption: "${frontmatter.featured_image_caption}"` : ''}
 categories: [${frontmatter.categories.map(cat => `"${cat}"`).join(", ")}]
 tags: [${frontmatter.tags.map(tag => `"${tag}"`).join(", ")}]
+draft: ${frontmatter.draft}
+type: "${frontmatter.type}"
 ---
 
 ${cleanedContent}
@@ -251,14 +270,15 @@ ${cleanedContent}
 
       if (fileExists) {
         updatedPosts++;
-        console.log(`📝 Updated: ${post.slug}`);
       } else {
         newPosts++;
-        console.log(`✨ New post: ${post.slug}`);
       }
     });
 
-    console.log(`✅ Sync complete! ${newPosts} new posts, ${updatedPosts} updated posts`);
+    // Delete posts that no longer exist in WordPress (reverse sync)
+    const deletedPosts = deleteRemovedPosts(wordPressSlugs, existingSlugs);
+
+    console.log(`✅ Sync complete! ${newPosts} new posts, ${updatedPosts} updated posts, ${deletedPosts.length} deleted posts`);
 
   } catch (error) {
     console.error('❌ Sync failed:', error.message);
@@ -267,4 +287,3 @@ ${cleanedContent}
 }
 
 syncWordPressPosts();
-
