@@ -5,8 +5,16 @@
   "type": "module",
   "scripts": {
     "sync": "node scripts/sync-wp.mjs",
-    "build": "hugo --minify",
-    "serve": "hugo server -D"
+    "build": "hugo --minify && node scripts/optimize.mjs",
+    "serve": "hugo server -D",
+    "dev": "hugo server -D --disableFastRender",
+    "clean": "rm -rf public resources",
+    "sync-build": "npm run sync && npm run build",
+    "preview": "hugo server --minify --disableFastRender",
+    "check": "hugo --printPathWarnings --printI18nWarnings",
+    "optimize": "node scripts/optimize.mjs",
+    "security-check": "node scripts/security-check.mjs",
+    "pre-commit": "npm run security-check && npm run check"
   },
   "dependencies": {
     "node-fetch": "^3.3.2"

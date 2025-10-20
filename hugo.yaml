@@ -17,6 +17,33 @@ menu:
 
 params:
   footer: "&copy; [Vinay Thoke](https://bio.link/vinaythoke) 2025 -- {Year}"
+  description: "Digital insights, technology leadership, and innovation strategies by Vinay Thoke"
+  author: "Vinay Thoke"
+
+# Performance optimizations
+minify:
+  disableCSS: false
+  disableHTML: false
+  disableJS: false
+  disableJSON: false
+  disableSVG: false
+  disableXML: false
+  minifyOutput: true
+  tdewolff:
+    css:
+      keepCSS2: false
+      precision: 0
+    html:
+      keepComments: false
+      keepConditionalComments: true
+      keepDefaultAttrVals: true
+      keepDocumentTags: true
+      keepEndTags: true
+      keepQuotes: false
+      keepWhitespace: false
+    js:
+      keepVarNames: false
+      precision: 0
 
 markup:
   goldmark:
@@ -42,3 +69,14 @@ markup:
     startLevel: 2
     endLevel: 4
     ordered: false
+# SEO and sitemap configuration
+sitemap:
+  changefreq: "weekly"
+  priority: 0.5
+  filename: "sitemap.xml"
+
+# Output formats
+outputs:
+  home: ["HTML", "RSS", "JSON"]
+  page: ["HTML"]
+  section: ["HTML", "RSS"]
