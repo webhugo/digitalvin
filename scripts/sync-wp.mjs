@@ -193,11 +193,6 @@ async function testGraphQLEndpoint(endpoint, headers) {
 async function syncWordPressPosts() {
   try {
     console.log('🔄 Fetching posts from WordPress...');
-    console.log('🔍 Environment Debug:');
-    console.log('   NODE_ENV:', process.env.NODE_ENV || 'undefined');
-    console.log('   CI:', process.env.CI || 'undefined');
-    console.log('   GITHUB_ACTIONS:', process.env.GITHUB_ACTIONS || 'undefined');
-    console.log('   All env vars containing WP:', Object.keys(process.env).filter(key => key.includes('WP')));
 
     // Prepare headers
     const headers = {
@@ -210,12 +205,8 @@ async function syncWordPressPosts() {
       const credentials = Buffer.from(`${process.env.WP_AUTH_USER}:${process.env.WP_AUTH_PASS}`).toString('base64');
       headers['Authorization'] = `Basic ${credentials}`;
       console.log('🔐 Using HTTP Basic Authentication');
-      console.log(`   Username: ${process.env.WP_AUTH_USER}`);
-      console.log(`   Password: ${'*'.repeat(process.env.WP_AUTH_PASS.length)}`);
     } else {
       console.log('⚠️  No HTTP Basic Auth credentials provided');
-      console.log('   WP_AUTH_USER:', process.env.WP_AUTH_USER ? 'SET' : 'NOT SET');
-      console.log('   WP_AUTH_PASS:', process.env.WP_AUTH_PASS ? 'SET' : 'NOT SET');
       console.log('   Set WP_AUTH_USER and WP_AUTH_PASS environment variables if needed');
     }
 
