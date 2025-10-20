@@ -38,3 +38,7 @@ markup:
     codeFences: true
     style: github
     lineNos: false
+  tableOfContents:
+    startLevel: 2
+    endLevel: 4
+    ordered: false
