@@ -193,6 +193,11 @@ async function testGraphQLEndpoint(endpoint, headers) {
 async function syncWordPressPosts() {
   try {
     console.log('🔄 Fetching posts from WordPress...');
+    console.log('🔍 Environment Debug:');
+    console.log('   NODE_ENV:', process.env.NODE_ENV || 'undefined');
+    console.log('   CI:', process.env.CI || 'undefined');
+    console.log('   GITHUB_ACTIONS:', process.env.GITHUB_ACTIONS || 'undefined');
+    console.log('   All env vars containing WP:', Object.keys(process.env).filter(key => key.includes('WP')));
 
     // Prepare headers
     const headers = {

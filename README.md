@@ -208,11 +208,17 @@ markup:
 
 ### Environment Variables
 
-No sensitive environment variables are required for this setup. All configuration is handled through:
+For local development, you can create a `.env` file (not committed to git):
 
-- Hugo configuration files
-- GitHub repository settings
-- WordPress GraphQL endpoint (public)
+```bash
+WP_AUTH_USER=your_wordpress_username
+WP_AUTH_PASS=your_wordpress_password
+```
+
+For production deployment, these are configured as GitHub repository secrets:
+
+- `WP_AUTH_USER`: WordPress HTTP Basic Auth username
+- `WP_AUTH_PASS`: WordPress HTTP Basic Auth password
 
 ## 🛡️ Security
 

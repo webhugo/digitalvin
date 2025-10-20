@@ -38,6 +38,9 @@ jobs:
         run: npm install
 
       - name: Sync WordPress Posts
+        env:
+          WP_AUTH_USER: ${{ secrets.WP_AUTH_USER || vars.WP_AUTH_USER }}
+          WP_AUTH_PASS: ${{ secrets.WP_AUTH_PASS || vars.WP_AUTH_PASS }}
         run: npm run sync
 
       - name: Commit new posts (if any)

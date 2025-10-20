@@ -14,8 +14,8 @@ This repository follows security best practices to ensure no sensitive informati
 - ✅ All endpoints are public (WordPress GraphQL is read-only)
 
 ### ✅ Safe Configuration
-- ✅ WordPress GraphQL endpoint is public and read-only
-- ✅ GitHub Actions uses only public repository secrets
+- ✅ WordPress GraphQL endpoint uses HTTP Basic Auth (credentials in GitHub Secrets)
+- ✅ GitHub Actions uses encrypted repository secrets for authentication
 - ✅ Hugo configuration contains no sensitive data
 - ✅ All personal information uses public profiles/links
 
@@ -43,10 +43,14 @@ This repository follows security best practices to ensure no sensitive informati
 - Author name: "Vinay Thoke" (public profile)
 - Email: "reachme@vinaythoke.com" (public contact)
 - Links: All point to public profiles (LinkedIn, bio.link)
-- WordPress site: "blog.digitalvin.com" (public blog)
+- WordPress site: "blog.digitalvin.com" (protected with HTTP Basic Auth)
+
+### GitHub Secrets (Encrypted)
+- `WP_AUTH_USER`: WordPress HTTP Basic Auth username
+- `WP_AUTH_PASS`: WordPress HTTP Basic Auth password
 
 ### Endpoints
-- WordPress GraphQL: `https://blog.digitalvin.com/graphql` (public, read-only)
+- WordPress GraphQL: `https://blog.digitalvin.com/graphql` (protected with HTTP Basic Auth)
 - Production site: `https://digitalvin.com` (public website)
 - GitHub repository: Public repository
 
