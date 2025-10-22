@@ -30,36 +30,30 @@
     }
   };
 
-  // TOC functionality
+  // TOC functionality - Simple dropdown like OutlineWiki
   window.toggleTOC = function() {
     const toc = document.getElementById('toc');
-    const overlay = document.getElementById('tocOverlay');
     const toggle = document.querySelector('.toc-toggle');
     
-    if (toc && overlay) {
+    if (toc) {
       const isOpen = toc.classList.contains('open');
       
       if (isOpen) {
         closeTOC();
       } else {
         toc.classList.add('open');
-        overlay.classList.add('active');
         toggle.classList.add('active');
-        document.body.style.overflow = 'hidden';
       }
     }
   };
 
   window.closeTOC = function() {
     const toc = document.getElementById('toc');
-    const overlay = document.getElementById('tocOverlay');
     const toggle = document.querySelector('.toc-toggle');
     
-    if (toc && overlay) {
+    if (toc) {
       toc.classList.remove('open');
-      overlay.classList.remove('active');
       toggle.classList.remove('active');
-      document.body.style.overflow = '';
     }
   };
 
@@ -71,7 +65,7 @@
 
   // TOC initialization and active section tracking
   function initTOC() {
-    const tocLinks = document.querySelectorAll('.toc a');
+    const tocLinks = document.querySelectorAll('.toc-dropdown a');
     const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
     
     // Smooth scroll for TOC links
@@ -98,7 +92,7 @@
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           const id = entry.target.id;
-          const tocLink = document.querySelector(`.toc a[href="#${id}"]`);
+          const tocLink = document.querySelector(`.toc-dropdown a[href="#${id}"]`);
           
           if (tocLink) {
             if (entry.isIntersecting) {
@@ -120,6 +114,18 @@
         }
       });
     }
+
+    // Close TOC when clicking outside
+    document.addEventListener('click', function(event) {
+      const toc = document.getElementById('toc');
+      const container = document.querySelector('.toc-container');
+      
+      if (toc && container && toc.classList.contains('open')) {
+        if (!container.contains(event.target)) {
+          closeTOC();
+        }
+      }
+    });
 
     // Keyboard navigation
     document.addEventListener('keydown', function(e) {
