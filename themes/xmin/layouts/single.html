@@ -1,20 +1,25 @@
 {{ partial "header.html" . }}
 
 {{ if .TableOfContents }}
-<div class="toc-container">
-  <button class="toc-toggle" onclick="toggleTOC()" aria-label="Toggle table of contents">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </button>
-  
-  <nav class="toc-dropdown" id="toc">
-    <div class="toc-header">Contents</div>
+<!-- Mobile TOC Toggle -->
+<button class="toc-mobile-toggle" id="tocMobileToggle" aria-label="Toggle table of contents">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</button>
+
+<!-- Desktop TOC - Left Column -->
+<aside class="toc-sidebar" id="tocSidebar" aria-label="Table of contents">
+  <div class="toc-label">Contents</div>
+  <nav class="toc-nav" id="tocNav">
     {{ .TableOfContents }}
   </nav>
-</div>
+</aside>
+
+<!-- Mobile TOC Overlay -->
+<div class="toc-overlay" id="tocOverlay"></div>
 {{ end }}
 
 <article>
