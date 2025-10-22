@@ -5,7 +5,7 @@ slug: "trick-for-precise-photo-edits-using-nano-banana"
 excerpt: "Forget endless prompt-tweaking. The next level of AI photo editing is here, and it's brilliantly simple. This guide unlocks the \"Redbox Trick\". It's a method to get pixel-perfect results from models like Gemini. Learn how to stop describing your edits and start directing them. Draw a box, add a note, and tell the AI to get to work. It’s precision editing, no manual effort required."
 description: "Forget endless prompt-tweaking. The next level of AI photo editing is here, and it's brilliantly simple. This guide unlocks the \"Redbox Trick\". It's a method to get pixel-perfect results from models like Gemini. Learn how to stop describing your edits and start directing them. Draw a box, add a note, and tell the AI to get to work. It’s precision editing, no manual effort required."
 author: "Vinay"
-featured_image: "https://blog.digitalvin.com/wp-content/uploads/2025/10/precise-ai-photo-edits-using-gemini-nano-banana.webp"
+featured_image: "https://blog.digitalvin.com/wp-content/uploads/2025/10/precise-ai-photo-edits-using-gemini-nano-banana-e1761152408829.webp"
 featured_image_alt: ""
 categories: ["AI", "Guide", "Tricks"]
 tags: ["AI Photos", "Gemini", "Nano Banana"]
