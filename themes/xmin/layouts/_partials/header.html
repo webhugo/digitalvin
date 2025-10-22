@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ if .Params.description }}{{ .Params.description }}{{ else if .Params.excerpt }}{{ .Params.excerpt }}{{ else }}{{ .Site.Params.description | default .Site.Title }}{{ end }}">
+    <meta name="author" content="{{ .Params.author | default .Site.Params.author | default "Vinay Thoke" }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+    <meta property="og:url" content="{{ .Permalink }}">
+    <meta property="og:title" content="{{ .Title }} | {{ .Site.Title }}">
+    <meta property="og:description" content="{{ if .Params.description }}{{ .Params.description }}{{ else if .Params.excerpt }}{{ .Params.excerpt }}{{ else }}{{ .Site.Params.description | default .Site.Title }}{{ end }}">
+    {{ with .Params.featured_image }}<meta property="og:image" content="{{ . }}">{{ end }}
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ .Permalink }}">
+    <meta property="twitter:title" content="{{ .Title }} | {{ .Site.Title }}">
+    <meta property="twitter:description" content="{{ if .Params.description }}{{ .Params.description }}{{ else if .Params.excerpt }}{{ .Params.excerpt }}{{ else }}{{ .Site.Params.description | default .Site.Title }}{{ end }}">
+    {{ with .Params.featured_image }}<meta property="twitter:image" content="{{ . }}">{{ end }}
+    
+    <title>{{ .Title }} | {{ .Site.Title }}</title>
+    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}?v={{ now.Unix }}" />
+    <link rel="stylesheet" href="{{ "css/fonts.css" | relURL }}?v={{ now.Unix }}" />
+    <link rel="canonical" href="{{ .Permalink }}">
+    {{ partial "head_custom.html" . }}
+  </head>
+
+  <body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+      <span class="theme-text">Dark</span>
+    </button>
+    
+    <header class="site-header">
+      <h1 class="site-logo">
+        <a href="{{ "/" | relURL }}">DigitalVin</a>
+      </h1>
+    </header>
+    
+    <nav>
+    <ul class="menu">
+      {{ range .Site.Menus.main }}
+      <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
+      {{ end }}
+    </ul>
+    <hr/>
+    </nav>
+
+

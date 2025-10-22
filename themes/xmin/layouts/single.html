@@ -1,0 +1,76 @@
+{{ partial "header.html" . }}
+
+{{ if .TableOfContents }}
+<button class="toc-toggle" onclick="toggleTOC()" aria-label="Toggle table of contents">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</button>
+
+<div class="toc-overlay" id="tocOverlay" onclick="closeTOC()"></div>
+<nav class="toc" id="toc">
+  <div class="toc-header">
+    <span class="toc-title">Contents</span>
+    <button class="toc-close" onclick="closeTOC()" aria-label="Close table of contents">×</button>
+  </div>
+  <div class="toc-content">
+    {{ .TableOfContents }}
+  </div>
+</nav>
+{{ end }}
+
+<article>
+  {{ with .Params.featured_image }}
+  <div class="featured-image">
+    <img src="{{ . }}" alt="{{ $.Title }}">
+  </div>
+  {{ end }}
+
+  <header class="article-header">
+    <h1 class="article-title">{{ .Title | markdownify }}</h1>
+    <div class="article-meta">
+      <time datetime="{{ .Date.Format " 2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+      {{ with .Params.author }}<span class="author"> / <a href="https://bio.link/vinaythoke">{{ . }}</a></span>{{ end }}
+      {{ if .Params.categories }}
+      {{ range .Params.categories }}
+      <span class="category-meta"> / <a href="{{ " /categories/" | relLangURL }}{{ . | urlize }}">{{ . }}</a></span>
+      {{ end }}
+      {{ end }}
+    </div>
+  </header>
+
+  {{ if and .Params.excerpt (ne .Params.excerpt "") }}
+  <div class="post-excerpt">
+    <strong>TLDR;</strong> <em>{{ .Params.excerpt | safeHTML }}</em>
+  </div>
+  {{ end }}
+
+  <main>
+    {{ .Content }}
+  </main>
+
+  <div class="author-block">
+    <div class="author-info">
+      <h3>About the Author</h3>
+      <p><strong>Vinay Thoke</strong> is a seasoned technology leader and digital strategist with expertise in cloud
+        architecture, DevOps, and scalable system design. Currently driving digital transformation initiatives, he
+        combines technical depth with business acumen to deliver innovative solutions.</p>
+      <div class="author-links">
+        <a href="https://linkedin.com/in/vinaythoke" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://bio.link/vinaythoke" target="_blank" rel="noopener">Bio</a>
+      </div>
+    </div>
+  </div>
+
+  {{ if .Params.tags }}
+  <div class="post-tags">
+    {{ range .Params.tags }}
+    <a href="{{ " /tags/" | relLangURL }}{{ . | urlize }}">{{ . }}</a>
+    {{ end }}
+  </div>
+  {{ end }}
+</article>
+
+{{ partial "footer.html" . }}

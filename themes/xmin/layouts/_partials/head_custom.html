@@ -1,0 +1,38 @@
+<!-- Performance optimizations -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://blog.digitalvin.com">
+
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+<!-- RSS Feed -->
+<link rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" href="{{ "index.xml" | absURL }}">
+
+<!-- JSON-LD structured data for SEO -->
+{{ if .IsPage }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": {{ .Title | jsonify }},
+  "description": {{ if .Params.description }}{{ .Params.description | jsonify }}{{ else if .Params.excerpt }}{{ .Params.excerpt | jsonify }}{{ else }}{{ .Summary | jsonify }}{{ end }},
+  "author": {
+    "@type": "Person",
+    "name": {{ .Params.author | default "Vinay Thoke" | jsonify }},
+    "url": "https://bio.link/vinaythoke"
+  },
+  "datePublished": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ .Site.Title | jsonify }},
+    "url": {{ .Site.BaseURL | jsonify }}
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ .Permalink | jsonify }}
+  }{{ with .Params.featured_image }},
+  "image": {{ . | jsonify }}{{ end }}
+}
+</script>
+{{ end }}

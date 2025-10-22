@@ -1,0 +1,18 @@
+  <footer>
+  {{ partial "foot_custom.html" . }}
+  
+  {{ with .Site.Params.footer }}
+  <hr/>
+  <div class="footer-links">
+    <a href="{{ "categories/" | relURL }}">Categories</a>
+    <a href="{{ "tags/" | relURL }}">Tags</a>
+  </div>
+  {{ replace . "{Year}" now.Year | markdownify }}
+  {{ end }}
+  </footer>
+
+  <script src="{{ "js/theme.js" | relURL }}?v={{ now.Unix }}" defer></script>
+  <script src="{{ "js/performance.js" | relURL }}?v={{ now.Unix }}" defer></script>
+
+  </body>
+</html>
