@@ -113,6 +113,14 @@ function cleanContent(content) {
   cleaned = cleaned.replace(/class="wp-block-[^"]*"/g, '');
   cleaned = cleaned.replace(/class=""/g, '');
 
+  // Convert HTML headings to Markdown for Hugo TOC compatibility
+  cleaned = cleaned.replace(/<h1[^>]*>(.*?)<\/h1>/g, '# $1');
+  cleaned = cleaned.replace(/<h2[^>]*>(.*?)<\/h2>/g, '## $1');
+  cleaned = cleaned.replace(/<h3[^>]*>(.*?)<\/h3>/g, '### $1');
+  cleaned = cleaned.replace(/<h4[^>]*>(.*?)<\/h4>/g, '#### $1');
+  cleaned = cleaned.replace(/<h5[^>]*>(.*?)<\/h5>/g, '##### $1');
+  cleaned = cleaned.replace(/<h6[^>]*>(.*?)<\/h6>/g, '###### $1');
+
   // Convert <br> tags to proper line breaks
   cleaned = cleaned.replace(/<br\s*\/?>/g, '\n');
   cleaned = cleaned.replace(/<br>/g, '\n');
