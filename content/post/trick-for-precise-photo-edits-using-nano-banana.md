@@ -13,11 +13,11 @@ draft: false
 type: "post"
 ---
 
-<h2 >A Simple Guide: The "Red box Trick" for AI Photo Edits with Nano Banana</h2>
+## A Simple Guide: The "Red box Trick" for AI Photo Edits with Nano Banana
 
 <p>This guide shows you a simple trick to get better, more exact edits from Gemini's flagship image editing model "Nano Banana". It helps the Gemini understand exactly what you want to change.</p>
 
-<h3 >Follow this guide to use this Red Box Trick:</h3>
+### Follow this guide to use this Red Box Trick:
 
 <p><strong>Step 1: Open Your Image</strong></p>
 
@@ -51,7 +51,7 @@ type: "post"
 
 <p>Let the Gemini run edits with Nano Banana. It will read your notes, make the changes only in the boxes, and then remove your red boxes and text, leaving you with the final, edited image.</p>
 
-<h2 >Tips for the Best Results</h2>
+## Tips for the Best Results
 
 <ul >
 <li><strong>Keep notes short:</strong> Use simple phrases like "Add a hat" or "Make this blue." Long sentences can confuse the AI.</li>

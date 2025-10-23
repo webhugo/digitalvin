@@ -35,7 +35,7 @@ Your tax dollars are being stolen. <a href="https://t.co/hSZdNY4wxf">https://t.c
 
 <hr />
 
-<h3 >Our "Cutting-Edge" Tech (That's Decades Old)</h3>
+### Our "Cutting-Edge" Tech (That's Decades Old)
 
 <p>This is where all the data pros roll their eyes, because we've had this <em>wild, cutting-edge technology</em> to handle this for ages. It's called SQL.</p>
 
