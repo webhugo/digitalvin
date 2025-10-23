@@ -33,34 +33,81 @@
   // TOC functionality - OutlineWiki left sidebar style
   let tocObserver = null;
 
-  function initTOC() {
+  window.toggleTOC = function() {
     const tocSidebar = document.getElementById('tocSidebar');
-    const tocMobileToggle = document.getElementById('tocMobileToggle');
+    const tocToggle = document.getElementById('tocToggle');
     const tocOverlay = document.getElementById('tocOverlay');
     
     if (!tocSidebar) return;
 
-    // Mobile toggle functionality
-    if (tocMobileToggle) {
-      tocMobileToggle.addEventListener('click', function() {
-        const isOpen = tocSidebar.classList.contains('mobile-open');
-        if (isOpen) {
-          closeMobileTOC();
-        } else {
-          openMobileTOC();
-        }
-      });
+    const isOpen = tocSidebar.classList.contains('active');
+    
+    if (isOpen) {
+      closeTOC();
+    } else {
+      openTOC();
+    }
+  };
+
+  function openTOC() {
+    const tocSidebar = document.getElementById('tocSidebar');
+    const tocToggle = document.getElementById('tocToggle');
+    const tocOverlay = document.getElementById('tocOverlay');
+    
+    if (tocSidebar) {
+      tocSidebar.classList.add('active');
+      if (tocToggle) tocToggle.classList.add('active');
+      
+      // Only use overlay and prevent scroll on mobile
+      if (window.innerWidth <= 900) {
+        if (tocOverlay) tocOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+  }
+
+  function closeTOC() {
+    const tocSidebar = document.getElementById('tocSidebar');
+    const tocToggle = document.getElementById('tocToggle');
+    const tocOverlay = document.getElementById('tocOverlay');
+    
+    if (tocSidebar) {
+      tocSidebar.classList.remove('active');
+      if (tocToggle) tocToggle.classList.remove('active');
+      
+      // Only handle overlay on mobile
+      if (tocOverlay) tocOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  function initTOC() {
+    const tocSidebar = document.getElementById('tocSidebar');
+    const tocOverlay = document.getElementById('tocOverlay');
+    
+    if (!tocSidebar) return;
+
+    // Close TOC when clicking overlay
+    if (tocOverlay) {
+      tocOverlay.addEventListener('click', closeTOC);
     }
 
-    // Close mobile TOC when clicking overlay
-    if (tocOverlay) {
-      tocOverlay.addEventListener('click', closeMobileTOC);
-    }
+    // Close TOC when clicking outside on desktop
+    document.addEventListener('click', function(e) {
+      const tocSidebar = document.getElementById('tocSidebar');
+      const tocToggle = document.getElementById('tocToggle');
+      
+      if (tocSidebar && tocToggle && tocSidebar.classList.contains('active')) {
+        if (!tocSidebar.contains(e.target) && !tocToggle.contains(e.target)) {
+          closeTOC();
+        }
+      }
+    });
 
     // Keyboard navigation
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
-        closeMobileTOC();
+        closeTOC();
       }
     });
 
@@ -69,28 +116,6 @@
     
     // Setup smooth scrolling for TOC links
     setupSmoothScrolling();
-  }
-
-  function openMobileTOC() {
-    const tocSidebar = document.getElementById('tocSidebar');
-    const tocOverlay = document.getElementById('tocOverlay');
-    
-    if (tocSidebar && tocOverlay) {
-      tocSidebar.classList.add('mobile-open');
-      tocOverlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-  }
-
-  function closeMobileTOC() {
-    const tocSidebar = document.getElementById('tocSidebar');
-    const tocOverlay = document.getElementById('tocOverlay');
-    
-    if (tocSidebar && tocOverlay) {
-      tocSidebar.classList.remove('mobile-open');
-      tocOverlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
   }
 
   function initActiveTracking() {

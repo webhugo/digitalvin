@@ -42,19 +42,11 @@ body {
   padding: 0;
 }
 
-/* Main content container */
+/* Main content container - keep centered */
 .main-content {
   max-width: 700px;
   margin: 0 auto;
   padding: 1em;
-  margin-left: 240px; /* Space for TOC sidebar */
-  transition: margin-left 0.3s ease;
-}
-
-/* Adjust content when no TOC */
-body:not(.has-toc) .main-content {
-  margin-left: auto;
-  margin-right: auto;
 }
 
 /* Toggle buttons (theme and TOC) */
@@ -86,6 +78,43 @@ body:not(.has-toc) .main-content {
 .toc-toggle {
   left: 20px;
   z-index: 1001;
+}
+
+/* TOC Toggle - always visible */
+.toc-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 36px;
+  height: 36px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.toc-toggle:hover {
+  border-color: var(--accent-red);
+  background: var(--accent-bg);
+}
+
+.toc-toggle:focus {
+  outline: 2px solid var(--accent-red);
+  outline-offset: 2px;
+}
+
+.toc-toggle svg {
+  transition: transform 0.2s ease;
+}
+
+.toc-toggle.active svg {
+  transform: rotate(90deg);
 }
 
 .theme-toggle:hover,
@@ -535,19 +564,27 @@ article main ol ol>li::before {
 
 /* ===== TABLE OF CONTENTS - OutlineWiki Style ===== */
 
-/* Desktop TOC Sidebar */
+/* Desktop TOC Sidebar - simple show/hide */
 .toc-sidebar {
   position: fixed;
-  left: 0;
+  left: 20px;
   top: 50%;
   transform: translateY(-50%);
   width: 200px;
   padding: 20px;
-  z-index: 100;
+  z-index: 1000;
   max-height: 80vh;
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  background: var(--bg-color);
+  /* Remove all borders and shadows */
+  display: none; /* Hidden by default */
+}
+
+/* Show TOC when active - simple visibility toggle */
+.toc-sidebar.active {
+  display: block;
 }
 
 .toc-sidebar::-webkit-scrollbar {
@@ -646,34 +683,7 @@ article main ol ol>li::before {
   outline-offset: 2px;
 }
 
-/* Mobile TOC Toggle */
-.toc-mobile-toggle {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  width: 36px;
-  height: 36px;
-  background: var(--bg-color);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1001;
-  color: var(--text-color);
-  transition: all 0.2s ease;
-}
 
-.toc-mobile-toggle:hover {
-  border-color: var(--accent-red);
-  background: var(--accent-bg);
-}
-
-.toc-mobile-toggle:focus {
-  outline: 2px solid var(--accent-red);
-  outline-offset: 2px;
-}
 
 /* Mobile TOC Overlay */
 .toc-overlay {
@@ -694,48 +704,184 @@ article main ol ol>li::before {
   visibility: visible;
 }
 
-/* Mobile TOC Panel */
-.toc-sidebar.mobile-open {
-  position: fixed;
-  top: 0;
-  left: 0;
-  transform: none;
-  width: 280px;
-  height: 100vh;
-  background: var(--bg-color);
-  border-right: 1px solid var(--border-color);
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
-  padding: 80px 20px 20px 20px;
-  z-index: 1000;
-  overflow-y: auto;
-}
-
-[data-theme="dark"] .toc-sidebar.mobile-open {
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3);
-}
-
 /* Responsive behavior */
 @media (max-width: 900px) {
-  .main-content {
-    margin-left: 0;
-  }
-  
+  /* On mobile, TOC becomes full-height panel */
   .toc-sidebar {
-    display: none;
+    top: 0;
+    transform: none;
+    height: 100vh;
+    width: 280px;
+    padding: 80px 20px 20px 20px;
+    left: -300px;
   }
   
-  .toc-mobile-toggle {
-    display: flex;
-  }
-  
-  body.has-toc .main-content {
-    margin-left: 0;
+  .toc-sidebar.active {
+    left: 0;
   }
 }
 
 /* Very small screens */
 @media (max-width: 480px) {
-  .toc-sidebar.mobile-open {
+  .toc-sidebar {
     width: 100%;
+    left: -100%;
+  }
+  
+  .toc-sidebar.active {
+    left: 0;
+  }
+}
+/* ==
+=== TABLE OF CONTENTS - Simple OutlineWiki Style ===== */
+
+/* Desktop TOC Sidebar - simple show/hide, no animations */
+.toc-sidebar {
+  position: fixed;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 200px;
+  padding: 20px;
+  z-index: 1000;
+  max-height: 80vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  background: var(--bg-color);
+  display: none; /* Hidden by default */
+}
+
+.toc-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Show TOC when active - simple visibility toggle */
+.toc-sidebar.active {
+  display: block;
+}
+
+/* TOC Label */
+.toc-label {
+  font-size: 0.75em;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+  padding-left: 4px;
+}
+
+/* TOC Navigation */
+.toc-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc-nav li {
+  margin: 0;
+  padding: 0;
+}
+
+/* TOC Links - Clean minimal style */
+.toc-nav a {
+  display: block;
+  color: var(--text-muted);
+  text-decoration: none;
+  line-height: 1.4;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 400;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+/* H1 links */
+.toc-nav > ul > li > a {
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 0.9em;
+  margin-bottom: 2px;
+}
+
+/* H2 links */
+.toc-nav ul ul > li > a {
+  padding-left: 16px;
+  font-size: 0.8em;
+}
+
+/* H3 links */
+.toc-nav ul ul ul > li > a {
+  padding-left: 24px;
+  font-size: 0.75em;
+  opacity: 0.8;
+}
+
+/* Hover state */
+.toc-nav a:hover {
+  color: var(--text-color);
+  background: var(--accent-bg);
+}
+
+/* Active state - simple highlight */
+.toc-nav a.active {
+  color: var(--accent-red);
+  font-weight: 500;
+}
+
+/* Focus styles for accessibility */
+.toc-nav a:focus {
+  outline: 2px solid var(--accent-red);
+  outline-offset: 2px;
+}
+
+/* TOC Overlay - only for mobile */
+.toc-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  display: none;
+  z-index: 999;
+}
+
+.toc-overlay.active {
+  display: block;
+}
+
+/* Responsive behavior */
+@media (max-width: 900px) {
+  /* On mobile, TOC becomes slide-in panel */
+  .toc-sidebar {
+    top: 0;
+    transform: none;
+    height: 100vh;
+    width: 280px;
+    padding: 80px 20px 20px 20px;
+    left: -300px;
+    border-right: 1px solid var(--border-color);
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+  }
+  
+  .toc-sidebar.active {
+    left: 0;
+    display: block;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .toc-sidebar {
+    width: 100%;
+    left: -100%;
+  }
+  
+  .toc-sidebar.active {
+    left: 0;
   }
 }
