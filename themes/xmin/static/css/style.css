@@ -42,7 +42,7 @@ body {
   padding: 0;
 }
 
-/* Main content container - keep centered */
+/* Main content container - always centered */
 .main-content {
   max-width: 700px;
   margin: 0 auto;
@@ -735,7 +735,7 @@ article main ol ol>li::before {
 /* ==
 === TABLE OF CONTENTS - Simple OutlineWiki Style ===== */
 
-/* Desktop TOC Sidebar - simple show/hide, no animations */
+/* Desktop TOC Sidebar - positioned in left margin */
 .toc-sidebar {
   position: fixed;
   left: 20px;
@@ -750,6 +750,26 @@ article main ol ol>li::before {
   -ms-overflow-style: none;
   background: var(--bg-color);
   display: none; /* Hidden by default */
+}
+
+/* On smaller screens where there's no room, position differently */
+@media (max-width: 1199px) {
+  .toc-sidebar {
+    /* On smaller screens, overlay with background */
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    left: 70px; /* Position to right of toggle button */
+    top: 60px; /* Below toggle button */
+    transform: none;
+    width: 240px;
+    max-height: 60vh;
+  }
+  
+  [data-theme="dark"] .toc-sidebar {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
 }
 
 .toc-sidebar::-webkit-scrollbar {
@@ -853,23 +873,25 @@ article main ol ol>li::before {
   display: block;
 }
 
-/* Responsive behavior */
+/* Mobile behavior - slide-in panel */
 @media (max-width: 900px) {
-  /* On mobile, TOC becomes slide-in panel */
   .toc-sidebar {
-    top: 0;
-    transform: none;
+    /* Override desktop positioning for mobile */
+    top: 0 !important;
+    transform: none !important;
     height: 100vh;
     width: 280px;
     padding: 80px 20px 20px 20px;
-    left: -300px;
-    border-right: 1px solid var(--border-color);
-    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+    left: -300px !important;
+    border: none !important;
+    border-right: 1px solid var(--border-color) !important;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 0 !important;
     transition: left 0.3s ease;
   }
   
   .toc-sidebar.active {
-    left: 0;
+    left: 0 !important;
     display: block;
   }
 }
@@ -877,11 +899,11 @@ article main ol ol>li::before {
 /* Very small screens */
 @media (max-width: 480px) {
   .toc-sidebar {
-    width: 100%;
-    left: -100%;
+    width: 100% !important;
+    left: -100% !important;
   }
   
   .toc-sidebar.active {
-    left: 0;
+    left: 0 !important;
   }
 }
